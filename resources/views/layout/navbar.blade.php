@@ -37,12 +37,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin">
-                            <i class="bi bi-speedometer2"></i>
-                            <span>Admin</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="/kontestan">
                             <i class="bi bi-trophy"></i>
                             <span>Kontestan</span>
