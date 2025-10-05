@@ -20,46 +20,32 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Navbar Content -->
+            <!-- Navbar Links -->
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav mx-auto">
-                    
-                    <li class="nav-item">
-                        <a class="nav-link" href="/penilaian">
-                            <i class="bi bi-clipboard-data"></i>
-                            <span>Penilaian</span>
-                        </a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/scan">
                             <i class="bi bi-qr-code-scan"></i>
                             <span>Scan QR</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/kontestan">
-                            <i class="bi bi-trophy"></i>
-                            <span>Kontestan</span>
-                        </a>
-                    </li>
                 </ul>
+            </div>
 
-                <!-- Right side actions -->
-                <div class="navbar-actions">
-                    <a href="/login" class="btn btn-primary">
-                     <i class="bi bi-box-arrow-in-right"></i>
-                        <span>Login</span>
-                    </a>
-                </div>
+            <!-- Right Side: Login Button -->
+            <div class="navbar-actions ms-auto">
+                <a href="/login" class="btn btn-primary">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Login</span>
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- Spacer to prevent content from hiding under fixed navbar -->
     <div class="navbar-spacer"></div>
 </header>
 
-<!-- Bootstrap Icons CSS -->
+<!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 <style>
