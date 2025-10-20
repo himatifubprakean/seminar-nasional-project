@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\FormController;
 use App\Livewire\PenilaianComponent;
+use App\Http\Controllers\ExcelUploadController;
+
 
 // login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -30,3 +32,6 @@ Route::get('/kontestan', [ExpoController::class, 'listKontestan'])->name('kontes
 
 
 Route::post('/admin/import/kontestan', [ExpoController::class, 'import'])->name('admin.import.kontestan');
+
+Route::get('/upload-excel', [ExcelUploadController::class, 'index'])->name('upload.excel.form');
+Route::post('/upload-excel', [ExcelUploadController::class, 'upload'])->name('upload.excel.submit');
