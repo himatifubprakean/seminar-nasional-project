@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pesertas', function (Blueprint $table) {
+        Schema::create('peserta', function (Blueprint $table) {
             $table->id();
-            $table->string('nim')->unique();
-            $table->string('nama');
-            $table->string('email')->nullable();
-            $table->string('wa');
+            $table->string('name');
+            $table->string('email');
+            $table->string('phone')->nullable();
             $table->string('qr_hash')->unique();
             $table->timestamps();
         });
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pesertas');
+        Schema::dropIfExists('peserta');
     }
 };

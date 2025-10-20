@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kontestans', function (Blueprint $table) {
+        Schema::create('daftar_hadir', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kontestan');
-            $table->string('tema')->nullable();
+            $table->foreignId('id_peserta')->constrained()->onDelete('cascade');
+            $table->timestamp('waktu_hadir');
+            $table->string('status')->default('hadir');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kontestans');
+        Schema::dropIfExists('daftar_hadir');
     }
 };

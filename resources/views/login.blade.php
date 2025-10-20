@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Expo Management System</title>
+    <title>Login | Seminar Nasional System System</title>
     <link rel="icon" href="{{ asset('img/logo-expo.jpg') }}" type="image/x-icon">
 
     <!-- Bootstrap CSS -->
@@ -27,12 +27,9 @@
                             <!-- Left side - Brand/Image -->
                             <div class="col-md-6 d-none d-md-flex login-banner">
                                 <div class="login-banner-content">
-                                    <div class="logo-area mb-5">
-                                        <img src="{{ asset('img/logo-expo.jpg') }}" alt="Expo Logo" class="logo-image">
-                                    </div>
-                                    <h2 class="banner-title">Welcome to<br>Expo Management</h2>
-                                    <p class="banner-text">Sign in to access your dashboard and manage your expo events
-                                        efficiently.</p>
+                                    
+                                    <h2 class="banner-title">Seminar Nasional</h2>
+                                    <p class="banner-text">Lakukan Sign In untuk Mengelola Acara Seminar</p>
                                     <div class="banner-shape-1"></div>
                                     <div class="banner-shape-2"></div>
                                 </div>
@@ -44,13 +41,10 @@
                                     <div class="d-flex justify-content-between align-items-center mb-4">
                                         <div>
                                             <h3 class="form-title">Sign In</h3>
-                                            <p class="form-subtitle">Welcome back! Please login to your account.</p>
+                                            <p class="form-subtitle">Silahkan login ke akun anda</p>
                                         </div>
                                         
-                                        <div class="d-block d-md-none">
-                                            <img src="{{ asset('img/logo-expo.jpg') }}" alt="Expo Logo"
-                                                class="mobile-logo">
-                                        </div>
+                                        
                                     </div>
 
                                     @if (session('error'))
@@ -64,37 +58,47 @@
                                         </div>
                                     @endif
 
-                                    <form method="POST" action="{{ route('login') }}">
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                <div>
+                                                    @foreach ($errors->all() as $error)
+                                                        <div>{{ $error }}</div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                    @endif
+
+                                    <form method="POST" action="{{ route('login.post') }}">
                                         @csrf
                                         <div class="form-group mb-4">
-                                            <label for="email" class="form-label">Email Address</label>
+                                            <label for="nim" class="form-label">NIM</label>
                                             <div class="input-group input-group-merge">
                                                 <span class="input-group-text">
-                                                    <i class="bi bi-envelope"></i>
+                                                    <i class="bi bi-person-badge"></i>
                                                 </span>
-                                                <input type="email" class="form-control" id="email" name="email"
-                                                    placeholder="Enter your email" required>
+                                                <input type="number" class="form-control" id="nim" name="nim"
+                                                    placeholder="Masukkan NIM" required>
                                             </div>
-                                            @error('email')
-                                                <div class="text-danger mt-1 small">{{ $message }}</div>
-                                            @enderror
+                
                                         </div>
 
                                         <div class="form-group mb-4">
-                                            {{-- <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <label for="qr_hash" class="form-label">QR Hash</label>
-                                                <a href="#" class="forgot-link">Need help?</a>
-                                            </div> --}}
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <label for="password" class="form-label">Password</label>
+                                                
+                                            </div>
                                             <div class="input-group input-group-merge">
                                                 <span class="input-group-text">
-                                                    <i class="bi bi-qr-code"></i>
+                                                    <i class="bi bi-lock"></i>
                                                 </span>
-                                                <input type="text" class="form-control" id="qr_hash" name="qr_hash"
-                                                    placeholder="Enter your QR hash" required>
+                                                <input type="password" class="form-control" id="password" name="password"
+                                                    placeholder="Masukkan password " required>
                                             </div>
-                                            @error('qr_hash')
-                                                <div class="text-danger mt-1 small">{{ $message }}</div>
-                                            @enderror
                                         </div>
 
                                         {{-- <div class="form-check mb-4">
