@@ -1,4 +1,3 @@
-
 <header class="navbar-wrapper">
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
@@ -29,6 +28,13 @@
                             <span>Scan QR</span>
                         </a>
                     </li>
+<li class="nav-item">
+    <a class="nav-link" href="/upload-excel">
+        <i class="bi bi-file-earmark-excel"></i>
+        <span>Upload Excel</span>
+    </a>
+</li>
+
                 </ul>
             </div>
 
