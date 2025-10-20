@@ -1,35 +1,42 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Peserta;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+
+
 
 class LoginController extends Controller
 {
     public function showLoginForm()
     {
+        if(Auth::check()){
+            return redirect()->route('scan');
+        }
         return view('login');
     }
 
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'qr_hash' => 'required|string',
-        ]);
+       $request->validate([
+        'nim' => 'required|numeric',
+        'password' => 'required'
+       ]);
 
-        $peserta = Peserta::where('email', $request->email)
-                          ->where('qr_hash', $request->qr_hash)
-                          ->first();
+       $user = User::where('nim', $request->nim)->first();
 
-        if (!$peserta) {
-            return redirect()->back()->with('error', 'Email atau QR tidak valid.');
-        }
+       if($user && Hash::check($request->password, $user->password)){
+        Auth::login($user);
 
-        session(['peserta_id' => $peserta->id]);
+        $request->session()->regenerate();
 
-        return redirect()->route('penilaian')->with('success', 'Berhasil login! Silahkan melakukan penilaian.');
+        return redirect()->intended(route('scan'));
+
+       }
+       return back()->with('error', 'NIM atau password salah');
+
     }
 }

@@ -3,24 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Peserta extends Model
 {
+    //
+    use HasFactory;
+
+    protected $table = 'peserta';
+
     protected $fillable = [
-        'nim',
-        'nama',
+        'name',
         'email',
-        'wa',
+        'phone',
         'qr_hash'
+
     ];
 
-    public function absen()
-    {
-        return $this->hasOne(Absen::class, 'peserta_id');
-    }
-
-    public function penilaians()
-    {
-        return $this->hasMany(Penilaian::class, 'peserta_id');
+    public function daftar_hadir(){
+        return $this->hasMany(Daftar_hadir::class);
     }
 }
