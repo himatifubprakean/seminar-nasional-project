@@ -20,8 +20,9 @@
         @endif
 
         {{-- Form Upload --}}
-        <form action="{{ route('upload.excel.submit') }}" method="POST" enctype="multipart/form-data"
-              class="space-y-6">
+<form action="{{ route('upload.excel.post') }}" method="POST" enctype="multipart/form-data"
+      class="space-y-6">
+
             @csrf
             <div class="flex flex-col items-center justify-center space-y-3">
                 <label class="block text-gray-700 font-medium">Pilih File Excel</label>

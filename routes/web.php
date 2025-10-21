@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\FormController;
 use App\Livewire\PenilaianComponent;
+use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ExcelUploadController;
 
 
@@ -22,6 +23,7 @@ Route::middleware(['auth'])->group(function(){
     Route::post('/absen', [PresensiController::class, 'absen'])->name('absen.submit');
     Route::get('/peserta', [PresensiController::class, 'listPeserta'])->name('peserta.list');
     Route::get('/qrcode/{id}', [PresensiController::class, 'generateQRCode'])->name('qrcode.generate');
+    
+    Route::get('/upload-excel', [ExcelUploadController::class, 'index'])->name('upload.excel');
+    Route::post('/upload-excel', [ExcelUploadController::class, 'ImportExcel'])->name('upload.excel.post');
 });
-
-
