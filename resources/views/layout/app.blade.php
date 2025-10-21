@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expo</title>
+    <title>Seminar Nasional</title>
     <link rel="icon" href="{{ asset('img/logo-expo.jpg') }}" type="image/x-icon">
 
     <!-- Bootstrap -->

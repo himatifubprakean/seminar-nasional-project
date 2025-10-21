@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('peserta', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('nomor_peserta');
             $table->string('email');
             $table->string('phone')->nullable();
             $table->string('qr_hash')->unique();

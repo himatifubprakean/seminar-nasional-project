@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Daftar_hadir;
 use App\Models\Peserta;
 
-use App\Imports\PesertaImport;
+
 use Maatwebsite\Excel\Facades\Excel;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Str;
@@ -17,30 +17,15 @@ class PresensiController extends Controller
 {
     //
 
-    public function ImportExcel(Request $request){
 
-        $request->validate([
-            'file' =>'required|mimes:xlsx,xls'
-        ]);
-        
-        try{
-            Excel::import(new PesertaImport, $request->file('file'));
-            return redirect()->back()->with('success', 'Data berhasil diimport dan QR Code digenerate!');
+    // public function generateQRCode($pesertaId){
+    //     $peserta = Peserta::findOrFail($pesertaId);
 
-        }catch(\Exception $e){
-            return redirect()->back()-with('error','Error'. $e->getMessage());
-        }
-
-    }
-
-    public function generateQRCode($pesertaId){
-        $peserta = Peserta::findOrFail($pesertaId);
-
-        $qrCode = QrCode::format('png')
-                            ->size(200)
-                            ->generate($peserta->qr_hash);
-        return response($qrCode)->header('Content-type', 'image/png');
-    }
+    //     $qrCode = QrCode::format('png')
+    //                         ->size(200)
+    //                         ->generate($peserta->qr_hash);
+    //     return response($qrCode)->header('Content-type', 'image/png');
+    // }
 
     public function absen(Request $request)
     {
@@ -54,23 +39,17 @@ class PresensiController extends Controller
         $peserta = Peserta::where('qr_hash', $qrHash)->first();
 
         if (!$peserta) {
-            return response()->json([
-                'success' => false,
-                'message' => 'QR Code tidak valid atau peserta tidak ditemukan.'
-            ], 404);
+            return redirect()->back()->with('error', 'Error: ' . 'Peserta Tidak Valid');
         }
 
         // Cek apakah sudah absen hari ini
         $today = now()->format('Y-m-d');
-        $alreadyAbsen = Presensi::where('peserta_id', $peserta->id)
+        $alreadyAbsen = Presensi::where('id_peserta', $peserta->id)
             ->whereDate('waktu_hadir', $today)
             ->exists();
 
         if ($alreadyAbsen) {
-            return response()->json([
-                'success' => false,
-                'message' => $peserta->nama . ' sudah melakukan absen hari ini.'
-            ], 400);
+            return redirect()->back()->with('error', 'Error: ' . 'Peserta Telah Melakukan Absen');
         }
 
         // Simpan presensi
@@ -80,25 +59,28 @@ class PresensiController extends Controller
             'status' => 'hadir'
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Absensi berhasil untuk ' . $peserta->nama,
-            'data' => [
-                'nama' => $peserta->nama,
-                'email' => $peserta->email,
-                'waktu' => now()->format('d/m/Y H:i:s')
-            ]
+        return redirect()->back()->with('success', 'Presensi Berhasil!');
+    }
+
+    public function manualAbsen(Request $request){
+        $request->validate([
+            "nomor_peserta"=>'required|string'
         ]);
-    }
 
-    public function listPeserta()
-    {
-        $peserta = Peserta::with(['presensi' => function($query) {
-            $query->orderBy('waktu_hadir', 'desc');
-        }])->get();
 
-        // return view('peserta-list', compact('peserta'));
+        $peserta = Peserta::where('nomor_peserta',$request['nomor_peserta'])->first();
+
+        if(!$peserta){
+            return redirect()->back()->with('error', 'Error:'.'Peserta tidak ditemukan');
+        }
+        $alreadyAbsen = Presensi::where('id_peserta', $peserta->id);
+
+        if($alreadyAbsen){
+            return redirect()->back()->with('error', 'Error'. 'Peserta telah melakukan absen');
+        }
+        
     }
+    
 
 
 }

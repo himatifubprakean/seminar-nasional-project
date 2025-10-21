@@ -12,18 +12,20 @@ class PesertaEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $peserta;
+    public $qrCodePath;
 
-    public function __construct(Peserta $peserta)
+    public function __construct(Peserta $peserta,$qrCodePath)
     {
         $this->peserta = $peserta;
+        $this->qrCodePath = $qrCodePath;
     }
 
     public function build()
     {
-        return $this->subject('QR Code dan ID Code untuk ExpoTechnoVision 2025')
+        return $this->subject('QR Code Presensi Seminar Nasional')
                     ->view('emails.peserta')
-                    ->attach(public_path('qr_codes/'.$this->peserta->qr_hash.'.png'), [
-                        'as' => 'QRCode-'.$this->peserta->nama.'.png',
+                    ->attach($this->qrCodePath, [
+                        'as' => 'qrcode-' . $this->peserta->nama . '.png',
                         'mime' => 'image/png',
                     ]);
     }
