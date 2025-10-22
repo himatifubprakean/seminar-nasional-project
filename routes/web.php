@@ -5,7 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SemnasController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ExcelUploadController;
-use App\Http\Controllers\EmailController; // ✅ Tambahin controller Email
+use App\Http\Controllers\EmailController; 
 use App\Livewire\PenilaianComponent;
 
 // Halaman login
@@ -21,12 +21,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/upload-excel', [ExcelUploadController::class, 'ImportExcel'])->name('upload.excel.submit');
 
     // ✅ Tambahin route untuk kirim QR Code ke email
-    Route::post('/send-qrcode-email', [EmailController::class, 'sendQRCodeEmail'])->name('send.qrcode.email');
+    Route::post('/send-qrcode-email', [SemnasController::class, 'SendBulkEmail'])->name('send.qrcode.email');
 
     // Presensi dan peserta
     Route::post('/absen', [PresensiController::class, 'absen'])->name('absen.submit');
-    Route::get('/peserta', [PresensiController::class, 'listPeserta'])->name('peserta.list');
-    Route::get('/qrcode/{id}', [PresensiController::class, 'generateQRCode'])->name('qrcode.generate');
     Route::post('/manual-absen', [PresensiController::class, 'manualAbsen'])->name('manual-absen.post');
 
     // Fitur tambahan

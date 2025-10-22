@@ -68,7 +68,7 @@
             <div class="instructions">
                 <h3>Cara Menggunakan:</h3>
                 <ol>
-                    <li><strong>Bawa QR Code</strong> ini (dalam bentuk digital atau print)</li>
+                    <li><strong>Bawa QR Code</strong> ini (dalam bentuk digital)</li>
                     <li><strong>Tunjukkan QR Code</strong> ke scanner saat presensi</li>
                     <li><strong>Pastikan QR Code</strong> terlihat jelas dan tidak rusak</li>
                     <li><strong>QR Code ini bersifat personal</strong>, jangan bagikan ke orang lain</li>
@@ -79,7 +79,7 @@
                 <h4 style="margin-top: 0; color: #0066cc;">📋 Informasi Peserta:</h4>
                 <p><strong>Nama:</strong> {{ $peserta->nama }}</p>
                 <p><strong>Email:</strong> {{ $peserta->email }}</p>
-                <p><strong>No. Identitas:</strong> {{ $peserta->no_identitas ?? '-' }}</p>
+                <p><strong>No. Identitas:</strong> {{ $peserta->nomor_peserta ?? '-' }}</p>
                 <p><strong>Kode Unik:</strong> {{ $peserta->qr_hash }}</p>
             </div>
 

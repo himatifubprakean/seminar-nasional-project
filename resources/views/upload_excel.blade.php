@@ -20,7 +20,7 @@
         @if (session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
                 <p class="font-semibold">✅ {{ session('success') }}</p>
-                <p class="text-sm mt-1 text-gray-600">📁 Path: {{ session('file_path') }}</p>
+                <p class="text-sm mt-1 text-gray-600"></p>
             </div>
         @endif
 
@@ -31,9 +31,9 @@
         @endif
 
         {{-- Form Upload --}}
-        <form action="{{ route('upload.excel.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form action="{{ route('upload.excel.submit') }}" method="POST" enctype="multipart/form-data" class=" flex justify-center mb-8"  >
             @csrf
-            <div>
+            <div class="w-full max-w-md text-center" >
                 <label for="excel_file" class="block text-gray-700 font-medium text-left mb-2">
                     Pilih File Excel:
                 </label>
@@ -47,10 +47,6 @@
                 @error('excel_file')
                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                 @enderror
-            </div>
-
-            {{-- Tombol Aksi (dalam satu baris) --}}
-            <div class="flex flex-wrap gap-4 justify-between mt-8">
                 {{-- Tombol Upload --}}
                 <button 
                     type="submit"
@@ -58,9 +54,20 @@
                 >
                     🚀 Upload Sekarang
                 </button>
+            </div>
 
+        </form>
+
+        <br>
+
+    
+        
+        <div class="d-flex justify-content-evenly ">
+            {{-- Tombol Aksi (dalam satu baris) --}}
+                
+                
                 {{-- Tombol Kirim QR --}}
-                <form action="{{ route('send.qrcode.email') }}" method="POST" class="flex-1">
+                <form   action="{{ route('send.qrcode.email') }}" method="POST" >
                     @csrf
                     <button 
                         type="submit"
@@ -69,37 +76,26 @@
                         📧 Kirim QR Code ke Email Peserta
                     </button>
                 </form>
-
+        
                 {{-- Tombol Hapus Semua Peserta --}}
                 <a 
                     href="{{ route('delete-all-participants.delete') }}" 
                     onclick="return confirm('Apakah kamu yakin ingin menghapus semua peserta? Tindakan ini tidak dapat dibatalkan!')"
-                    class="flex-1 bg-blue-600 hover:bg-red-700 text-black font-semibold py-2.5 rounded-lg shadow-md transition duration-200 text-center"
+                    class="flex-1 bg-blue-600 text-decoration-none hover:bg-red-700 text-black font-semibold py-2.5 rounded-lg shadow-md transition duration-200 text-center "
                 >
                     🗑️ Hapus Semua Peserta
                 </a>
-            </div>
-        </form>
-
-        {{-- Preview Data --}}
-        @if (session('preview_data'))
-            <div class="mt-10">
-                <h2 class="text-lg font-semibold mb-3 text-gray-700 flex items-center gap-2">
-                    📋 Data (5 Baris Pertama)
-                </h2>
-                <div class="overflow-x-auto border rounded-lg shadow-sm">
-                    <table class="min-w-full text-sm text-left border-collapse">
-                        @foreach (session('preview_data') as $row)
-                            <tr class="border-b hover:bg-gray-50 transition">
-                                @foreach ($row as $cell)
-                                    <td class="px-3 py-2">{{ $cell }}</td>
-                                @endforeach
-                            </tr>
-                        @endforeach
-                    </table>
-                </div>
-            </div>
-        @endif
+         
+        </div>
     </div>
+
+    
+    
+    
 </div>
+
+
+
+
+
 @endsection

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 use App\Models\Peserta;
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
+use App\Mail\PesertaEmail;
 
 class SemnasController extends Controller
 {
@@ -35,7 +37,7 @@ class SemnasController extends Controller
                     $qrCodePath = Storage::disk('public')->path($fileName);
 
                     
-                    Mail::to($p->email)->send(new KirimQRCodeMail($p, $qrCodePath));
+                    Mail::to($p->email)->send(new PesertaEmail($p, $qrCodePath));
 
                     
                     Storage::disk('public')->delete($fileName);
@@ -62,13 +64,14 @@ class SemnasController extends Controller
     }
     public function deleteAllParticipant(){
         try{
-            DB::transaction(function(){
-                Peserta::truncate();
-                
-            });
-        }catch(\Exception $e){
-            return redirect()->back()->with('error','Error: '.$e->getMessage());
-        }
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('peserta')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        
+        return redirect()->back()->with('success', 'Semua peserta berhasil dihapus');
+    } catch(\Exception $e){
+        return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+    }
     }
 
 }

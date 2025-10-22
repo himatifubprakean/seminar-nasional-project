@@ -235,15 +235,20 @@
             try {
                 this.updateStatus('scanning', 'Memproses QR Code...');
 
+                // Buat form data
+                const formData = new FormData();
+                formData.append('qr_hash', qrHash);
+                formData.append('_token', '{{ csrf_token() }}');
+
                 const response = await fetch('/absen', {
                     method: 'POST',
+                    body: formData,
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ qr_hash: qrHash })
+                        'X-Requested-With': 'XMLHttpRequest' // Penting untuk detect AJAX request
+                    }
                 });
 
+                // Parse response JSON
                 const result = await response.json();
 
                 if (result.success) {
@@ -254,17 +259,40 @@
                     this.showErrorAlert(result.message);
                 }
 
-                // Restart scanning after a brief pause
+            } catch (error) {
+                console.error('Error submitting attendance:', error);
+                
+                // Handle network errors atau JSON parse errors
+                if (error instanceof SyntaxError) {
+                    // Response bukan JSON, mungkin redirect HTML
+                    this.updateStatus('error', 'Terjadi kesalahan sistem');
+                    this.showErrorAlert('Terjadi kesalahan sistem. Silakan coba lagi.');
+                    console.log(error.message)
+                    
+                    // Fallback: submit form tradisional
+                    this.fallbackSubmit(qrHash);
+                } else {
+                    this.updateStatus('error', 'Terjadi kesalahan jaringan');
+                    this.showErrorAlert('Terjadi kesalahan jaringan: ' + error.message);
+                    console.log(error.message)
+                }
+            } finally {
+                // Restart scanning setelah jeda
                 setTimeout(() => {
                     if (this.isScanning) {
                         this.updateStatus('active', 'Sedang memindai...');
                     }
                 }, 3000);
+            }
+        }
 
+        // Fallback method
+        fallbackSubmit(qrHash) {
+            try {
+                this.qrHashInput.value = qrHash;
+                this.absenForm.submit();
             } catch (error) {
-                console.error('Error submitting attendance:', error);
-                this.updateStatus('error', 'Terjadi kesalahan saat mengirim data');
-                this.showErrorAlert('Terjadi kesalahan jaringan');
+                console.error('Fallback submit also failed:', error);
             }
         }
 
@@ -774,150 +802,6 @@
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const html5QrCode = new Html5Qrcode("reader");
-            const startButton = document.getElementById("startButton");
-            const stopButton = document.getElementById("stopButton");
-            const readerDiv = document.getElementById("reader");
-            const cameraPlaceholder = document.getElementById("cameraPlaceholder");
-            const scanOverlay = document.getElementById("scanOverlay");
-            const scannerStatus = document.getElementById("scannerStatus");
-            // const lastScan = document.getElementById("lastScan");
-            // const lastScanContent = document.getElementById("lastScanContent");
-
-            // QR Code configuration
-            const qrCodeConfig = {
-                fps: 10,
-                qrbox: {
-                    width: 250,
-                    height: 250
-                }
-            };
-
-            // Update scanner status
-            function updateStatus(status) {
-                let statusHTML = '';
-
-                switch (status) {
-                    case 'offline':
-                        statusHTML = `
-                    <div class="status-indicator offline">
-                        <span class="status-dot"></span>
-                        <span class="status-text">Kamera tidak aktif</span>
-                    </div>
-                    `;
-                        break;
-                    case 'online':
-                        statusHTML = `
-                    <div class="status-indicator online">
-                        <span class="status-dot"></span>
-                        <span class="status-text">Kamera aktif</span>
-                    </div>
-                    `;
-                        break;
-                    case 'scanning':
-                        statusHTML = `
-                    <div class="status-indicator scanning">
-                        <span class="status-dot"></span>
-                        <span class="status-text">Memindai QR Code...</span>
-                    </div>
-                    `;
-                        break;
-                }
-
-                scannerStatus.innerHTML = statusHTML;
-            }
-
-            // Start scanning
-            startButton.addEventListener("click", async () => {
-                startButton.style.display = "none";
-                stopButton.style.display = "block";
-                cameraPlaceholder.style.display = "none";
-                scanOverlay.style.display = "block";
-                // lastScan.style.display = "none";
-
-                updateStatus('scanning');
-
-                try {
-                    await html5QrCode.start({
-                            facingMode: "environment"
-                        },
-                        qrCodeConfig,
-                        (decodedText) => {
-                            // Show last scanned result
-                            // lastScanContent.textContent = decodedText;
-                            // lastScan.style.display = "block";
-
-                            // Submit form
-                            document.getElementById('qr_hash').value = decodedText;
-                            saveToDatabase();
-
-                            // Reset the scanning overlay for the next scan
-                            scanOverlay.style.display = "block"; // Keep showing scan overlay
-
-                        },
-                        (errorMessage) => {
-                            // Error callback
-                            console.warn(errorMessage);
-                        }
-                    ).then(() => {
-                        updateStatus('online');
-                    });
-
-                } catch (err) {
-                    console.error(err);
-                    alert(
-                        "Gagal mengakses kamera. Pastikan browser Anda mengizinkan akses kamera dan perangkat Anda memiliki kamera."
-                    );
-
-                    // Reset UI
-                    startButton.style.display = "block";
-                    stopButton.style.display = "none";
-                    cameraPlaceholder.style.display = "flex";
-                    scanOverlay.style.display = "none";
-                    updateStatus('offline');
-                }
-            });
-
-            // Stop scanning
-            stopButton.addEventListener("click", async () => {
-                try {
-                    await html5QrCode.stop();
-
-                    // Reset UI
-                    stopButton.style.display = "none";
-                    startButton.style.display = "block";
-                    cameraPlaceholder.style.display = "flex";
-                    scanOverlay.style.display = "none";
-                    updateStatus('offline');
-                } catch (err) {
-                    console.error(err);
-                }
-            });
-
-            // Clean up when leaving the page
-            window.addEventListener('beforeunload', () => {
-                if (html5QrCode.isScanning) {
-                    html5QrCode.stop().catch((err) => console.error(err));
-                }
-            });
-
-            // Initial status
-            updateStatus('offline');
-        });
-
-        function saveToDatabase() {
-            $.ajax({
-                url: "/api/absen",
-                method: "POST",
-                data: {
-                    qr_hash: document.getElementById('qr_hash').value
-                }
-            }).done((data) => {
-                toastr.success(data.message);
-            }).fail((error) => {
-                // toastr.error(error.responseJSON.message);
-            });
-        }
+        
     </script>
 @endsection

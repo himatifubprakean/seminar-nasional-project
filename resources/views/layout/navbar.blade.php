@@ -10,10 +10,11 @@
                             <path d="M7.5 12.5L10.5 15.5L16.5 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <span class="brand-text">Expo</span>
+                    <span class="brand-text">Seminar Nasional</span>
                 </div>
             </a>
 
+            
             <!-- Mobile Toggle Button -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
@@ -28,12 +29,6 @@
                             <span>Scan QR</span>
                         </a>
                     </li>
-<li class="nav-item">
-    <a class="nav-link" href="/upload-excel">
-        <i class="bi bi-file-earmark-excel"></i>
-        <span>Upload Excel</span>
-    </a>
-</li>
 
                 </ul>
             </div>
