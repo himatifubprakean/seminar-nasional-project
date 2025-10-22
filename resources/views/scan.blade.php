@@ -89,6 +89,23 @@
                             </form>
                         </div> --}}
                         </div>
+ <!-- Form input manual -->
+<div class="manual-input mt-2">
+    <div class="divider">
+        <span>atau input manual</span>
+    </div>
+    <form action="{{ route('manual-absen.post') }}" method="POST" class="manual-form">
+        @csrf
+        <div class="input-group">
+            <input type="text" name="no_peserta" class="form-control" placeholder="Masukkan No. Peserta" required>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-send"></i> Kirim
+            </button>
+        </div>
+    </form>
+</div>
+
+
 
                         <!-- Hidden form for submission -->
                         <form id="absenForm" action="/absen" method="POST" style="display: none;">

@@ -5,7 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SemnasController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ExcelUploadController;
-use App\Http\Controllers\EmailController; // ✅ Tambahin controller Email
+use App\Http\Controllers\EmailController; 
 use App\Livewire\PenilaianComponent;
 
 // Halaman login
@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/send-qrcode-email', [EmailController::class, 'sendQRCodeEmail'])->name('send.qrcode.email');
 
     // Presensi dan peserta
+    Route::get('/daftar-hadir', [PresensiController::class, 'showDaftarHadir'])->name('daftar.hadir');
     Route::post('/absen', [PresensiController::class, 'absen'])->name('absen.submit');
     Route::get('/peserta', [PresensiController::class, 'listPeserta'])->name('peserta.list');
     Route::get('/qrcode/{id}', [PresensiController::class, 'generateQRCode'])->name('qrcode.generate');
@@ -32,4 +33,5 @@ Route::middleware(['auth'])->group(function () {
     // Fitur tambahan
     Route::post('/send-bulk-email', [SemnasController::class, 'SendBulkEmail'])->name('send-bulk-email.post');
     Route::get('/delete-all-participants', [SemnasController::class, 'deleteAllParticipant'])->name('delete-all-participants.delete');
+
 });
