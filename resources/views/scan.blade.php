@@ -2,6 +2,14 @@
 
 @section('content')
     <div class="qr-scanner-container">
+        {{-- Notifikasi sukses --}}
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 text-left">
+                <p class="font-medium">{{ session('success') }}</p>
+                <p class="text-sm mt-1 text-gray-500">Path: {{ session('file_path') }}</p>
+            </div>
+        @endif
+
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-10 col-lg-8 col-xl-6">
@@ -107,6 +115,18 @@
                 </div>
             </div>
         </div>
+
+        {{-- Notifikasi Gagal/Error --}}
+        @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-left">
+                {{-- Pesan error utama --}}
+                <p class="font-medium">{{ session('error') }}</p>
+                @if (session('error_detail'))
+                    <p class="text-sm mt-1 text-gray-600">{{ session('error_detail') }}</p>
+                @endif
+            </div>
+        @endif
+        
     </div>
 
     <!-- Link to Bootstrap Icons -->
@@ -114,6 +134,221 @@
 
     <!-- QR Code Scanner Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+
+    <!-- Tambahkan di bagian head -->
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
+
+<!-- Update JavaScript section -->
+<script>
+    class QRScanner {
+        constructor() {
+            this.html5QrCode = null;
+            this.isScanning = false;
+            this.lastScanned = null;
+            
+            this.initializeElements();
+            this.initializeEventListeners();
+        }
+
+        initializeElements() {
+            this.startButton = document.getElementById('startButton');
+            this.stopButton = document.getElementById('stopButton');
+            this.scannerStatus = document.getElementById('scannerStatus');
+            this.scanOverlay = document.getElementById('scanOverlay');
+            this.cameraPlaceholder = document.getElementById('cameraPlaceholder');
+            this.reader = document.getElementById('reader');
+            this.absenForm = document.getElementById('absenForm');
+            this.qrHashInput = document.getElementById('qr_hash');
+        }
+
+        initializeEventListeners() {
+            this.startButton.addEventListener('click', () => this.startScanner());
+            this.stopButton.addEventListener('click', () => this.stopScanner());
+        }
+
+        async startScanner() {
+            try {
+                this.html5QrCode = new Html5Qrcode("reader");
+                
+                const cameras = await Html5Qrcode.getCameras();
+                if (cameras.length === 0) {
+                    throw new Error('Tidak ada kamera yang ditemukan');
+                }
+
+                const cameraId = cameras[0].id;
+
+                await this.html5QrCode.start(
+                    cameraId,
+                    {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 }
+                    },
+                    (decodedText) => this.onScanSuccess(decodedText),
+                    (errorMessage) => this.onScanError(errorMessage)
+                );
+
+                this.setScanningState(true);
+                this.updateStatus('active', 'Sedang memindai...');
+
+            } catch (error) {
+                console.error('Error starting scanner:', error);
+                this.updateStatus('error', 'Gagal mengakses kamera: ' + error.message);
+            }
+        }
+
+        async stopScanner() {
+            if (this.html5QrCode && this.isScanning) {
+                try {
+                    await this.html5QrCode.stop();
+                    this.html5QrCode.clear();
+                    this.setScanningState(false);
+                    this.updateStatus('offline', 'Kamera tidak aktif');
+                } catch (error) {
+                    console.error('Error stopping scanner:', error);
+                }
+            }
+        }
+
+        onScanSuccess(decodedText) {
+            // Prevent multiple scans of the same code within 2 seconds
+            if (this.lastScanned === decodedText && Date.now() - this.lastScanTime < 2000) {
+                return;
+            }
+
+            this.lastScanned = decodedText;
+            this.lastScanTime = Date.now();
+
+            console.log('QR Code detected:', decodedText);
+            
+            // Submit attendance
+            this.submitAttendance(decodedText);
+        }
+
+        onScanError(errorMessage) {
+            // Ignore common errors that occur during normal scanning
+            if (!errorMessage.includes('No MultiFormat Readers')) {
+                console.log('Scan error:', errorMessage);
+            }
+        }
+
+        async submitAttendance(qrHash) {
+            try {
+                this.updateStatus('scanning', 'Memproses QR Code...');
+
+                const response = await fetch('/absen', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ qr_hash: qrHash })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.updateStatus('success', result.message);
+                    this.showSuccessAlert(result.data);
+                } else {
+                    this.updateStatus('error', result.message);
+                    this.showErrorAlert(result.message);
+                }
+
+                // Restart scanning after a brief pause
+                setTimeout(() => {
+                    if (this.isScanning) {
+                        this.updateStatus('active', 'Sedang memindai...');
+                    }
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error submitting attendance:', error);
+                this.updateStatus('error', 'Terjadi kesalahan saat mengirim data');
+                this.showErrorAlert('Terjadi kesalahan jaringan');
+            }
+        }
+
+        setScanningState(scanning) {
+            this.isScanning = scanning;
+            
+            if (scanning) {
+                this.startButton.style.display = 'none';
+                this.stopButton.style.display = 'inline-block';
+                this.cameraPlaceholder.style.display = 'none';
+                this.reader.style.display = 'block';
+                this.scanOverlay.style.display = 'block';
+            } else {
+                this.startButton.style.display = 'inline-block';
+                this.stopButton.style.display = 'none';
+                this.cameraPlaceholder.style.display = 'flex';
+                this.reader.style.display = 'none';
+                this.scanOverlay.style.display = 'none';
+            }
+        }
+
+        updateStatus(status, message) {
+            const statusDot = this.scannerStatus.querySelector('.status-dot');
+            const statusText = this.scannerStatus.querySelector('.status-text');
+            
+            this.scannerStatus.className = 'scanner-status';
+            statusDot.className = 'status-dot';
+            
+            switch(status) {
+                case 'active':
+                    this.scannerStatus.classList.add('scanning');
+                    statusDot.classList.add('scanning');
+                    break;
+                case 'success':
+                    this.scannerStatus.classList.add('success');
+                    statusDot.classList.add('success');
+                    break;
+                case 'error':
+                    this.scannerStatus.classList.add('error');
+                    statusDot.classList.add('error');
+                    break;
+                default:
+                    this.scannerStatus.classList.add('offline');
+                    statusDot.classList.add('offline');
+            }
+            
+            statusText.textContent = message;
+        }
+
+        showSuccessAlert(data) {
+            this.showAlert('Berhasil!', `Absensi berhasil untuk ${data.nama} pada ${data.waktu}`, 'success');
+        }
+
+        showErrorAlert(message) {
+            this.showAlert('Gagal!', message, 'error');
+        }
+
+        showAlert(title, message, type) {
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+            alertDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                <strong>${title}</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            // Add to page
+            document.body.appendChild(alertDiv);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    }
+
+    // Initialize scanner when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        new QRScanner();
+    });
+</script>
 
     <style>
         /* Custom Styling */

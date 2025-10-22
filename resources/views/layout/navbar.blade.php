@@ -38,13 +38,18 @@
                 </ul>
             </div>
 
-            <!-- Right Side: Login Button -->
-            <div class="navbar-actions ms-auto">
-                <a href="/login" class="btn btn-primary">
-                    <i class="bi bi-box-arrow-in-right"></i>
-                    <span>Login</span>
-                </a>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/upload-excel">
+                            <i class="bi bi-file-earmark-spreadsheet"></i>
+                            <span>Import Peserta</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
+
+            
         </div>
     </nav>
 

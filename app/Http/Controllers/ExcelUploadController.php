@@ -3,25 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\PesertaImport;
 
 class ExcelUploadController extends Controller
 {
-    // Halaman form upload
+    // Menampilkan halaman upload
     public function index()
     {
-        return view('upload_excel'); 
+        return view('upload_excel');
     }
 
-    // Proses upload
-    public function upload(Request $request)
+    // Proses import file Excel
+    public function ImportExcel(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
+            'excel_file' => 'required|mimes:xlsx,xls'
         ]);
 
-        $file = $request->file('file');
-        $path = $file->store('excel_uploads');
-
-        return back()->with('success', 'File berhasil diupload ke: ' . $path);
+        try {
+            Excel::import(new PesertaImport, $request->file('excel_file'));
+            return redirect()->back()->with('success', 'Data berhasil diimport!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 }

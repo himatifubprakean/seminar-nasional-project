@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('daftar_hadir', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_peserta')->constrained()->onDelete('cascade');
+            $table->foreignId('id_peserta')->constrained('peserta')->onDelete('cascade');
             $table->timestamp('waktu_hadir');
             $table->string('status')->default('hadir');
             $table->timestamps();
