@@ -24,10 +24,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/send-qrcode-email', [SemnasController::class, 'SendBulkEmail'])->name('send.qrcode.email');
 
     // Presensi dan peserta
+    Route::get('/daftar-hadir', [PresensiController::class, 'showDaftarHadir'])->name('daftar.hadir');
     Route::post('/absen', [PresensiController::class, 'absen'])->name('absen.submit');
     Route::post('/manual-absen', [PresensiController::class, 'manualAbsen'])->name('manual-absen.post');
 
     // Fitur tambahan
     Route::post('/send-bulk-email', [SemnasController::class, 'SendBulkEmail'])->name('send-bulk-email.post');
     Route::get('/delete-all-participants', [SemnasController::class, 'deleteAllParticipant'])->name('delete-all-participants.delete');
+
 });

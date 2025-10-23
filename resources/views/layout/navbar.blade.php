@@ -1,7 +1,7 @@
 <header class="navbar-wrapper">
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <!-- Logo/Brand -->
+            <!-- Logo -->
             <a class="navbar-brand" href="/">
                 <div class="brand-container">
                     <div class="brand-logo">
@@ -14,13 +14,12 @@
                 </div>
             </a>
 
-            
-            <!-- Mobile Toggle Button -->
+            <!-- Toggle Mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Navbar Links -->
+            <!-- Menu Items -->
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
@@ -29,12 +28,12 @@
                             <span>Scan QR</span>
                         </a>
                     </li>
-
-                </ul>
-            </div>
-
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/daftar-hadir">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Daftar Hadir</span>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/upload-excel">
                             <i class="bi bi-file-earmark-spreadsheet"></i>
@@ -43,13 +42,12 @@
                     </li>
                 </ul>
             </div>
-
-            
         </div>
     </nav>
 
     <div class="navbar-spacer"></div>
 </header>
+
 
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
