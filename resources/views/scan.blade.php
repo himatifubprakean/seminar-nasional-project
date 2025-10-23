@@ -74,36 +74,42 @@
                             </div>
 
                             <!-- Manual input option -->
-                            {{-- <div class="manual-input">
-                            <div class="divider">
-                                <span>atau</span>
-                            </div>
-                            <form id="manualForm" action="/absen" method="POST" class="manual-form">
-                                @csrf
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Masukkan kode QR secara manual" name="manual_qr_hash">
-                                    <button class="btn btn-outline-primary" type="submit">
-                                        <i class="bi bi-send"></i>
-                                    </button>
+                            <div class="manual-input">
+                                <div class="divider">
+                                    <span>atau</span>
                                 </div>
-                            </form>
-                        </div> --}}
-                        </div>
- <!-- Form input manual -->
-<div class="manual-input mt-2">
-    <div class="divider">
-        <span>atau input manual</span>
-    </div>
-    <form action="{{ route('manual-absen.post') }}" method="POST" class="manual-form">
-        @csrf
-        <div class="input-group">
-            <input type="text" name="no_peserta" class="form-control" placeholder="Masukkan No. Peserta" required>
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-send"></i> Kirim
-            </button>
-        </div>
-    </form>
-</div>
+                                <form id="manualForm" action="/manual-absen" method="POST" class="manual-form">
+                                    @csrf
+                                    
+                                    <!-- Error umum di atas form -->
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <strong>Terjadi Kesalahan!</strong>
+                                            <ul class="mb-0 mt-1">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    @endif
+
+                                    <div class="input-group has-validation">
+                                        <input type="text" class="form-control @error('manual_qr_hash') is-invalid @enderror" 
+                                            placeholder="Masukkan kode QR secara manual" name="nomor_peserta"
+                                            value="{{ old('manual_qr_hash') }}">
+                                        <button class="btn btn-outline-primary" type="submit">
+                                            <i class="bi bi-send"></i>
+                                        </button>
+                                        
+                                        @error('manual_qr_hash')
+                                            <div class="invalid-feedback">
+                                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </form>
+                            </div>
 
 
 
@@ -269,6 +275,7 @@
                 const result = await response.json();
 
                 if (result.success) {
+                    console.log(result)
                     this.updateStatus('success', result.message);
                     this.showSuccessAlert(result.data);
                 } else {
@@ -360,7 +367,7 @@
         }
 
         showSuccessAlert(data) {
-            this.showAlert('Berhasil!', `Absensi berhasil untuk ${data.nama} pada ${data.waktu}`, 'success');
+            this.showAlert('Berhasil!', `Presensi berhasil untuk  pada ${data.waktu}`, 'success');
         }
 
         showErrorAlert(message) {

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Presensi;
+
+use App\Models\Daftar_hadir;
 use App\Models\Peserta;
 
 
@@ -88,11 +89,10 @@ class PresensiController extends Controller
         if (!$peserta) {
             return redirect()->back()->with('error', 'Peserta tidak ditemukan.');
         }
-        $alreadyAbsen = Daftar_hadir::where('id_peserta', $peserta->id);
 
         $today = now()->format('Y-m-d');
-        $alreadyAbsen = Presensi::where('peserta_id', $peserta->id)
-            ->whereDate('waktu_absen', $today)
+        $alreadyAbsen = Daftar_hadir::where('id_peserta', $peserta->id)
+            ->whereDate('waktu_hadir', $today)
             ->exists();
 
         if ($alreadyAbsen) {
@@ -102,7 +102,8 @@ class PresensiController extends Controller
         Daftar_hadir::create([
             'id_peserta' => $peserta->id,
             'waktu_hadir' => now(),
-            'status' => 'hadir'
+            'status' => 'hadir',
+            
         ]);
         return redirect()->back()->with('success', 'Presensi Berhasil!');
         
@@ -113,8 +114,8 @@ class PresensiController extends Controller
      */
     public function showDaftarHadir()
     {
-        $presensi = Presensi::with('peserta')
-            ->orderBy('waktu_absen', 'desc')
+        $presensi = Daftar_hadir::with('peserta')
+            ->orderBy('waktu_hadir', 'desc')
             ->get();
 
         return view('daftar_hadir', compact('presensi'));
