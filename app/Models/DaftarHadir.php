@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Daftar_hadir extends Model
+class DaftarHadir extends Model
 {
     //
     use HasFactory;
@@ -36,7 +36,7 @@ class Daftar_hadir extends Model
     ];
 
     public function peserta(){
-        return $this->belongsTo(Peserta::class);
+        return $this->belongsTo(Peserta::class, 'id_peserta');
     }
 
      public function sertifikat()

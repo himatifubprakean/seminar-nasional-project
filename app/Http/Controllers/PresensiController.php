@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Daftar_hadir;
+use App\Models\DaftarHadir;
 use App\Models\Peserta;
 
 
@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 class PresensiController extends Controller
 {
-    
+
 
     public function absen(Request $request)
     {
@@ -40,7 +40,7 @@ class PresensiController extends Controller
 
         // Cek apakah sudah absen hari ini
         $today = now()->format('Y-m-d');
-        $alreadyAbsen = Daftar_hadir::where('id_peserta', $peserta->id) // Perhatikan: ini harus 'peserta_id' konsisten
+        $alreadyAbsen = DaftarHadir::where('id_peserta', $peserta->id) // Perhatikan: ini harus 'peserta_id' konsisten
             ->whereDate('waktu_hadir', $today) // Perhatikan: ini 'waktu_absen' bukan 'waktu_hadir'
             ->exists();
 
@@ -55,7 +55,7 @@ class PresensiController extends Controller
         }
 
         // Simpan presensi
-        Daftar_hadir::create([
+        DaftarHadir::create([
             'id_peserta' => $peserta->id,
             'waktu_hadir' => now(),
             'status' => 'hadir'
@@ -91,7 +91,7 @@ class PresensiController extends Controller
         }
 
         $today = now()->format('Y-m-d');
-        $alreadyAbsen = Daftar_hadir::where('id_peserta', $peserta->id)
+        $alreadyAbsen = DaftarHadir::where('id_peserta', $peserta->id)
             ->whereDate('waktu_hadir', $today)
             ->exists();
 
@@ -99,14 +99,14 @@ class PresensiController extends Controller
             return redirect()->back()->with('error', 'Peserta sudah melakukan absen hari ini.');
         }
 
-        Daftar_hadir::create([
+        DaftarHadir::create([
             'id_peserta' => $peserta->id,
             'waktu_hadir' => now(),
             'status' => 'hadir',
-            
+
         ]);
         return redirect()->back()->with('success', 'Presensi Berhasil!');
-        
+
     }
 
     /**
@@ -114,10 +114,10 @@ class PresensiController extends Controller
      */
     public function showDaftarHadir()
     {
-        $presensi = Daftar_hadir::with('peserta')
+        $presensi = DaftarHadir::with('peserta')
             ->orderBy('waktu_hadir', 'desc')
             ->get();
 
-        return view('daftar_hadir', compact('presensi'));
+        return view('daftar_hadir');
     }
 }

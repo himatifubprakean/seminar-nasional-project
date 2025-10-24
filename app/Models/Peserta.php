@@ -22,6 +22,6 @@ class Peserta extends Model
     ];
 
     public function daftar_hadir(){
-        return $this->hasMany(Daftar_hadir::class);
+        return $this->hasMany(DaftarHadir::class, 'id_peserta');
     }
 }
